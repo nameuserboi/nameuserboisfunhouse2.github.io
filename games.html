@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Activities</title>
+<style>
+    body {
+        background: radial-gradient(circle at top, #151519 0%, #0d0d0f 80%);
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #eee;
+        padding: 20px;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    #loadingScreen {
+        position: fixed;
+        inset: 0;
+        background: #0d0d0f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity .2s ease-out;
+    }
+    #loadingScreen.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .loader {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #222;
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin .45s linear infinite;
+        filter: drop-shadow(0 0 4px white);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    h2 {
+        text-align: center;
+        margin-top: 5px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        opacity: 0;
+        animation: fadeIn .2s ease forwards;
+        text-shadow: 0 0 6px #ffffff55;
+    }
+
+    #searchBox {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 17px;
+        border-radius: 12px;
+        border: 1px solid #292933;
+        background: #141418;
+        color: #fff;
+        margin-bottom: 22px;
+        box-sizing: border-box;
+        opacity: 0;
+        animation: fadeIn .25s ease forwards;
+        transition: .2s ease;
+    }
+    #searchBox:focus {
+        outline: none;
+        border-color: white;
+        box-shadow: 0 0 6px #ffffff44;
+        background: #1a1a22;
+    }
+
+    #buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: center;
+        opacity: 0;
+        animation: fadeIn .3s ease forwards;
+    }
+
+    button {
+        background: #141418;
+        color: white;
+        border: 1px solid #292933;
+        padding: 13px 20px;
+        border-radius: 14px;
+        cursor: pointer;
+        font-size: 15px;
+        min-width: 150px;
+        white-space: nowrap;
+        will-change: transform;
+        transition: transform .12s ease, background .12s ease, border .12s ease;
+    }
+
+    button:hover {
+        background: #1b1b22;
+        border-color: white;
+        filter: drop-shadow(0 0 4px white);
+        transform: translateY(-3px);
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+    <div class="loader"></div>
+    <p style="margin-top:14px; color:#777;">Loading…</p>
+</div>
+
+<h2>Game List</h2>
+
+<input id="searchBox" type="text" placeholder="Search games...">
+
+<div id="buttons">Loading…</div>
+
+<script>
+const url = "GameList.txt";  // ← FIXED — loads from same folder as this HTML
+let lines = [];
+let lastRendered = [];
+
+// Load game list
+fetch(url)
+  .then(r => r.text())
+  .then(text => {
+      lines = text.split("\n").filter(l => l.trim() !== "");
+      renderButtons(lines);
+      requestAnimationFrame(() =>
+          document.getElementById("loadingScreen").classList.add("hide")
+      );
+  })
+  .catch(() => {
+      document.getElementById("buttons").innerHTML = "Error loading file.";
+      document.getElementById("loadingScreen").classList.add("hide");
+  });
+
+function cleanName(original) {
+    let n = original.trim();
+    if (n.toLowerCase().endsWith(".html")) n = n.slice(0, -5);
+    if (n.toLowerCase().startsWith("cl")) n = n.slice(2);
+    if (n.length) n = n[0].toUpperCase() + n.slice(1);
+    return n;
+}
+
+function renderButtons(list) {
+    if (JSON.stringify(list) === JSON.stringify(lastRendered)) return;
+    lastRendered = [...list];
+
+    const box = document.getElementById("buttons");
+    const frag = document.createDocumentFragment();
+
+    list.forEach(original => {
+        const btn = document.createElement("button");
+        btn.textContent = cleanName(original);
+        btn.onclick = () => openGame(original.trim());
+        frag.appendChild(btn);
+    });
+
+
+// Try candidate folders and open the first path that responds OK.
+async function openGame(filename) {
+    const candidates = [
+        `activities/${filename}`,
+        `activities2/${filename}`,
+        `${filename}`
+    ];
+
+    // Try HEAD requests first (works when served over http(s)).
+    for (const p of candidates) {
+        try {
+            const resp = await fetch(p, { method: 'HEAD' });
+            if (resp && resp.ok) {
+                window.open(p, '_blank');
+                return;
+            }
+        } catch (e) {
+            // network error or file:// where fetch may fail — ignore and try fallback
+        }
+    }
+
+    // As a fallback (or when running from file://), try opening candidates sequentially.
+    for (const p of candidates) {
+        try {
+            // Attempt to open; the browser will show a 404 if it doesn't exist.
+            window.open(p, '_blank');
+            return;
+        } catch (e) {
+            // ignore and try next
+        }
+    }
+
+    alert('Unable to find the game file: ' + filename);
+}
+    box.innerHTML = "";
+    box.appendChild(frag);
+}
+
+// THROTTLED search
+let searchTimeout;
+document.getElementById("searchBox").addEventListener("input", function () {
+    const q = this.value.toLowerCase();
+    clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(() => {
+        const filtered = lines.filter(l =>
+            cleanName(l).toLowerCase().includes(q) ||
+            l.toLowerCase().includes(q)
+        );
+        renderButtons(filtered);
+    }, 70);
+});
+</script>
+
+</body>
+</html>
