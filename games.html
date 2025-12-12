@@ -87,6 +87,46 @@ h2 {
     background: #1a1a22;
 }
 
+/* === NEW TOP BAR FOR FLOATING SEARCH + TITLE === */
+#gameTopBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 60px;
+    background: #1a1a22;
+    border-bottom: 1px solid #292933;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 500;
+    box-sizing: border-box;
+}
+
+#arcadeTitle {
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+#floatingSearchSmall {
+    width: 100%;
+    max-width: 360px;
+    padding: 10px 12px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1px solid #292933;
+    background: #141418;
+    color: white;
+}
+
+#floatingSearchSmall:focus {
+    outline: none;
+    border-color: white;
+    background: #1a1a22;
+}
+
 #buttons {
     display: flex;
     flex-wrap: wrap;
@@ -114,10 +154,10 @@ button {
 #gamePlayer {
     display: none;
     position: fixed;
-    top: 20px;
+    top: 80px;
     left: 20px;
-    width: 480px;
-    height: 360px;
+    width: 640px;
+    height: 520px; /* increased height */
     background: #15151b;
     padding: 0;
     border-radius: 14px;
@@ -139,17 +179,21 @@ button {
 
 .playerBtn {
     background: #1b1b22;
-    border: 1px solid #292933;
-    padding: 6px 10px;
-    border-radius: 8px;
+    border: 2px solid #292933; /* thicker border */
+    padding: 8px 12px;
+    border-radius: 12px; /* more rounded */
     cursor: pointer;
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+.playerBtn svg { width: 28px; height: 28px; }
 .playerBtn svg { width: 28px; height: 28px; }
 
 #gameFrame {
     width: 100%;
-    height: calc(100% - 44px);
+    height: calc(100% - 44px); /* still adjusts dynamically */
     border: none;
     background: #000;
 }
@@ -165,21 +209,20 @@ button {
 <h2>Game List</h2>
 
 <input id="searchBox" type="text" placeholder="Search games...">
-<input id="floatingSearch" type="text" placeholder="Search games..." style="display:none; opacity:1;">
+<div id="gameTopBar">
+    <div id="arcadeTitle">Ethyrnal's Arcade</div>
+    <input id="floatingSearchSmall" type="text" placeholder="Search games...">
+</div>
 
 <div id="buttons">Loading…</div>
 
 <div id="gamePlayer">
     <div id="playerTopBar">
         <button class="playerBtn" onclick="fullscreenGame()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
-                <path d="M4 4h6v2H6v4H4V4zm14 0v6h-2V6h-4V4h6zm0 14h-6v-2h4v-4h2v6zm-14 0v-6h2v4h4v2H4z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M4 4h6v2H6v4H4V4zm16 0v6h-2V6h-4V4h6zm0 16h-6v-2h4v-4h2v6zM4 20v-6h2v4h4v2H4z"/></svg>
         </button>
         <button class="playerBtn" onclick="closePlayer()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
-                <path d="M19 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H19v-2z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M15 6l-6 6 6 6" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
     </div>
     <iframe id="gameFrame"></iframe>
@@ -191,10 +234,11 @@ let lines = [];
 let lastRendered = [];
 
 const searchBox = document.getElementById("searchBox");
-const floatingSearch = document.getElementById("floatingSearch");
+const floatingSearchSmall = document.getElementById("floatingSearchSmall");
 const buttonsEl = document.getElementById("buttons");
 const player = document.getElementById("gamePlayer");
 const frame = document.getElementById("gameFrame");
+const topBar = document.getElementById("gameTopBar");
 
 fetch(url)
   .then(r => r.text())
@@ -231,7 +275,6 @@ function renderButtons(list) {
     buttonsEl.appendChild(frag);
 }
 
-// Open game player
 async function openFloatingPlayer(filename) {
     const candidates = [
         `activities/${filename}`,
@@ -247,37 +290,34 @@ async function openFloatingPlayer(filename) {
     document.querySelector("h2").style.display="none";
     searchBox.style.display="none";
 
-    floatingSearch.style.display="block";
-    floatingSearch.style.opacity = 1;
+    topBar.style.display = "flex";
 
-    buttonsEl.style.display="none"; // hide all buttons initially
+    buttonsEl.style.display="none";
     player.style.display="flex";
     frame.src = found;
 
-    document.body.classList.add("no-dots"); // hide background dots
+    document.body.classList.add("no-dots");
 }
 
-// Close game player
 function closePlayer() {
     frame.src = "";
     player.style.display = "none";
     document.querySelector("h2").style.display = "block";
     searchBox.style.display = "block";
-    floatingSearch.style.display = "none";
 
-    // Reset buttons to show all games
+    topBar.style.display = "none";
+
     renderButtons(lines);
     buttonsEl.style.display = "flex";
 
     player.style.width = "480px";
     player.style.height = "360px";
-    player.style.top = "20px";
+    player.style.top = "80px";
     player.style.left = "20px";
 
-    document.body.classList.remove("no-dots"); // restore background dots
+    document.body.classList.remove("no-dots");
 }
 
-// Fullscreen
 function fullscreenGame() {
     if(frame.requestFullscreen){
         frame.requestFullscreen();
@@ -285,40 +325,37 @@ function fullscreenGame() {
         player.style.height="100%";
         player.style.top="0";
         player.style.left="0";
-        floatingSearch.style.display="none";
+        topBar.style.display="none";
         buttonsEl.style.display="none";
     }
 }
 
-// Exit fullscreen
 document.addEventListener("fullscreenchange",()=>{
     if(!document.fullscreenElement){
         player.style.width="480px";
         player.style.height="360px";
-        player.style.top="20px";
+        player.style.top="80px";
         player.style.left="20px";
         if(player.style.display!=="none") {
-            floatingSearch.style.display="block";
-            buttonsEl.style.display="none"; // buttons hidden until search
+            topBar.style.display="flex";
+            buttonsEl.style.display="none";
         }
     }
 });
 
-// Floating search filtering
-floatingSearch.addEventListener("input", function() {
+floatingSearchSmall.addEventListener("input", function() {
     const q = this.value.toLowerCase();
     const filtered = lines.filter(l => cleanName(l).toLowerCase().includes(q) || l.toLowerCase().includes(q));
-    
+
     if (filtered.length > 0) {
-        buttonsEl.style.display = "flex"; // show buttons if matches
+        buttonsEl.style.display = "flex";
     } else {
-        buttonsEl.style.display = "none"; // hide if no matches
+        buttonsEl.style.display = "none";
     }
 
     renderButtons(filtered);
 });
 
-// Main search filtering
 let searchTimeout;
 searchBox.addEventListener("input",function(){
     const q=this.value.toLowerCase();
