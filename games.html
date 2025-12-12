@@ -4,136 +4,193 @@
 <meta charset="UTF-8">
 <title>Activities</title>
 <style>
-    /* Moving Background */
-    body {
-        background: radial-gradient(circle at top, #151519 0%, #0d0d0f 80%);
-        background-size: 200% 200%;
-        animation: moveBG 12s ease-in-out infinite;
-        font-family: "Segoe UI", Arial, sans-serif;
-        color: #eee;
-        padding: 20px;
-        margin: 0;
-        overflow-x: hidden;
-    }
+body {
+    background:
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 80px 120px, white, transparent),
+        radial-gradient(2px 2px at 150px 90px, white, transparent),
+        radial-gradient(2px 2px at 300px 200px, white, transparent),
+        radial-gradient(2px 2px at 500px 400px, white, transparent);
+    background-size: 600px 600px;
+    animation: moveDots 35s linear infinite;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #eee;
+    padding: 20px;
+    margin: 0;
+    overflow-x: hidden;
+    background-color: #0d0d10;
+    text-align: center;
+}
 
-    @keyframes moveBG {
-        0% { background-position: 50% 0%; }
-        50% { background-position: 50% 100%; }
-        100% { background-position: 50% 0%; }
-    }
+@keyframes moveDots { from { background-position: 0 0; } to { background-position: -600px 600px; } }
+@keyframes fadeIn { to { opacity: 1; } }
 
-    #loadingScreen {
-        position: fixed;
-        inset: 0;
-        background: #0d0d0f;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        z-index: 9999;
-        opacity: 1;
-        transition: opacity .2s ease-out;
-    }
-    #loadingScreen.hide {
-        opacity: 0;
-        pointer-events: none;
-    }
+#loadingScreen {
+    position: fixed;
+    inset: 0;
+    background: #0d0d0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity .2s ease-out;
+}
+#loadingScreen.hide { opacity: 0; pointer-events: none; }
 
-    .loader {
-        width: 48px;
-        height: 48px;
-        border: 4px solid #222;
-        border-top-color: white;
-        border-radius: 50%;
-        animation: spin .45s linear infinite;
-        filter: drop-shadow(0 0 4px white);
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #222;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin .45s linear infinite;
+    filter: drop-shadow(0 0 4px white);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    h2 {
-        text-align: center;
-        margin-top: 5px;
-        margin-bottom: 20px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        opacity: 0;
-        animation: fadeIn .2s ease forwards;
-        text-shadow: 0 0 6px #ffffff55;
-    }
+h2 {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn .2s forwards;
+    text-shadow: 0 0 6px #ffffff55;
+}
 
-    #searchBox {
-        width: 100%;
-        padding: 14px 16px;
-        font-size: 17px;
-        border-radius: 12px;
-        border: 1px solid #292933;
-        background: #141418;
-        color: #fff;
-        margin-bottom: 22px;
-        box-sizing: border-box;
-        opacity: 0;
-        animation: fadeIn .25s ease forwards;
-        transition: .2s ease;
-    }
-    #searchBox:focus {
-        outline: none;
-        border-color: white;
-        box-shadow: 0 0 6px #ffffff44;
-        background: #1a1a22;
-    }
+#searchBox, #floatingSearch {
+    width: 100%;
+    max-width: 480px;
+    padding: 14px 16px;
+    font-size: 17px;
+    border-radius: 12px;
+    border: 1px solid #292933;
+    background: #141418;
+    color: #fff;
+    margin: 0 auto 22px auto;
+    box-sizing: border-box;
+    display: block;
+    opacity: 0;
+    animation: fadeIn .25s forwards;
+    transition: opacity .25s ease;
+}
 
-    #buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        justify-content: center;
-        opacity: 0;
-        animation: fadeIn .3s ease forwards;
-    }
+#searchBox:focus, #floatingSearch:focus {
+    outline: none;
+    border-color: white;
+    background: #1a1a22;
+}
 
-    button {
-        background: #141418;
-        color: white;
-        border: 1px solid #292933;
-        padding: 13px 20px;
-        border-radius: 14px;
-        cursor: pointer;
-        font-size: 15px;
-        min-width: 150px;
-        white-space: nowrap;
-        will-change: transform;
-        transition: transform .12s ease, background .12s ease, border .12s ease;
-    }
+#buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn .3s forwards;
+}
 
-    button:hover {
-        background: #1b1b22;
-        border-color: white;
-        filter: drop-shadow(0 0 4px white);
-        transform: translateY(-3px);
-    }
+button {
+    background: #141418;
+    color: white;
+    border: 1px solid #292933;
+    padding: 13px 20px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 15px;
+    min-width: 150px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    @keyframes fadeIn { to { opacity: 1; } }
+#gamePlayer {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 480px;
+    height: 360px;
+    background: #15151b;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid #2d2d36;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+}
+
+#playerTopBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 6px 12px;
+    background: #1b1b22;
+    border-bottom: 1px solid #292933;
+}
+
+.playerBtn {
+    background: #1b1b22;
+    border: 1px solid #292933;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+}
+.playerBtn svg { width: 28px; height: 28px; }
+
+#gameFrame {
+    width: 100%;
+    height: calc(100% - 44px);
+    border: none;
+    background: #000;
+}
 </style>
 </head>
 <body>
 
 <div id="loadingScreen">
     <div class="loader"></div>
-    <p style="margin-top:14px; color:#777;">Loading…</p>
+    <p style="margin-top:14px;color:#777;">Loading…</p>
 </div>
 
 <h2>Game List</h2>
 
 <input id="searchBox" type="text" placeholder="Search games...">
+<input id="floatingSearch" type="text" placeholder="Search games..." style="display:none; opacity:1;">
 
 <div id="buttons">Loading…</div>
+
+<div id="gamePlayer">
+    <div id="playerTopBar">
+        <button class="playerBtn" onclick="fullscreenGame()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+                <path d="M4 4h6v2H6v4H4V4zm14 0v6h-2V6h-4V4h6zm0 14h-6v-2h4v-4h2v6zm-14 0v-6h2v4h4v2H4z"/>
+            </svg>
+        </button>
+        <button class="playerBtn" onclick="closePlayer()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+                <path d="M19 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H19v-2z"/>
+            </svg>
+        </button>
+    </div>
+    <iframe id="gameFrame"></iframe>
+</div>
 
 <script>
 const url = "GameList.txt";
 let lines = [];
 let lastRendered = [];
 
-// Load game list
+const searchBox = document.getElementById("searchBox");
+const floatingSearch = document.getElementById("floatingSearch");
+const buttonsEl = document.getElementById("buttons");
+const player = document.getElementById("gamePlayer");
+const frame = document.getElementById("gameFrame");
+
 fetch(url)
   .then(r => r.text())
   .then(text => {
@@ -144,79 +201,124 @@ fetch(url)
       );
   })
   .catch(() => {
-      document.getElementById("buttons").innerHTML = "Error loading file.";
+      buttonsEl.innerHTML = "Error loading file.";
       document.getElementById("loadingScreen").classList.add("hide");
   });
 
 function cleanName(original) {
     let n = original.trim();
-    if (n.toLowerCase().endsWith(".html")) n = n.slice(0, -5);
+    if (n.toLowerCase().endsWith(".html")) n = n.slice(0,-5);
     if (n.toLowerCase().startsWith("cl")) n = n.slice(2);
-    if (n.length) n = n[0].toUpperCase() + n.slice(1);
-    return n;
+    return n.charAt(0).toUpperCase() + n.slice(1);
 }
 
 function renderButtons(list) {
     if (JSON.stringify(list) === JSON.stringify(lastRendered)) return;
     lastRendered = [...list];
-
-    const box = document.getElementById("buttons");
     const frag = document.createDocumentFragment();
-
     list.forEach(original => {
         const btn = document.createElement("button");
         btn.textContent = cleanName(original);
-        btn.onclick = () => openGame(original.trim());
+        btn.onclick = () => openFloatingPlayer(original.trim());
         frag.appendChild(btn);
     });
-
-    box.innerHTML = "";
-    box.appendChild(frag);
+    buttonsEl.innerHTML = "";
+    buttonsEl.appendChild(frag);
 }
 
-// Open the game from multiple possible paths
-async function openGame(filename) {
+// Open game player
+async function openFloatingPlayer(filename) {
     const candidates = [
         `activities/${filename}`,
         `activities2/${filename}`,
         `${filename}`
     ];
-
+    let found = null;
     for (const p of candidates) {
-        try {
-            const resp = await fetch(p, { method: 'HEAD' });
-            if (resp && resp.ok) {
-                window.open(p, '_blank');
-                return;
-            }
-        } catch (e) {}
+        try { const r = await fetch(p, { method: "HEAD" }); if (r.ok){found=p; break;} } catch{}
     }
+    if(!found) found=candidates[2];
 
-    for (const p of candidates) {
-        try {
-            window.open(p, '_blank');
-            return;
-        } catch (e) {}
-    }
+    document.querySelector("h2").style.display="none";
+    searchBox.style.display="none";
 
-    alert('Unable to find the game file: ' + filename);
+    floatingSearch.style.display="block";
+    floatingSearch.style.opacity = 1;
+
+    buttonsEl.style.display="none"; // hide all buttons initially
+    player.style.display="flex";
+    frame.src = found;
 }
 
-// Throttled search
-let searchTimeout;
-document.getElementById("searchBox").addEventListener("input", function () {
-    const q = this.value.toLowerCase();
-    clearTimeout(searchTimeout);
+// Close game player
+function closePlayer() {
+    frame.src = "";
+    player.style.display = "none";
+    document.querySelector("h2").style.display = "block";
+    searchBox.style.display = "block";
+    floatingSearch.style.display = "none";
 
-    searchTimeout = setTimeout(() => {
-        const filtered = lines.filter(l =>
-            cleanName(l).toLowerCase().includes(q) ||
-            l.toLowerCase().includes(q)
-        );
+    // Reset buttons to show all games
+    renderButtons(lines);
+    buttonsEl.style.display = "flex";
+
+    player.style.width = "480px";
+    player.style.height = "360px";
+    player.style.top = "20px";
+    player.style.left = "20px";
+}
+
+// Fullscreen
+function fullscreenGame() {
+    if(frame.requestFullscreen){
+        frame.requestFullscreen();
+        player.style.width="100%";
+        player.style.height="100%";
+        player.style.top="0";
+        player.style.left="0";
+        floatingSearch.style.display="none";
+        buttonsEl.style.display="none";
+    }
+}
+
+// Exit fullscreen
+document.addEventListener("fullscreenchange",()=>{
+    if(!document.fullscreenElement){
+        player.style.width="480px";
+        player.style.height="360px";
+        player.style.top="20px";
+        player.style.left="20px";
+        if(player.style.display!=="none") {
+            floatingSearch.style.display="block";
+            buttonsEl.style.display="none"; // buttons hidden until search
+        }
+    }
+});
+
+// Floating search filtering
+floatingSearch.addEventListener("input", function() {
+    const q = this.value.toLowerCase();
+    const filtered = lines.filter(l => cleanName(l).toLowerCase().includes(q) || l.toLowerCase().includes(q));
+    
+    if (filtered.length > 0) {
+        buttonsEl.style.display = "flex"; // show buttons if matches
+    } else {
+        buttonsEl.style.display = "none"; // hide if no matches
+    }
+
+    renderButtons(filtered);
+});
+
+// Main search filtering
+let searchTimeout;
+searchBox.addEventListener("input",function(){
+    const q=this.value.toLowerCase();
+    clearTimeout(searchTimeout);
+    searchTimeout=setTimeout(()=>{
+        const filtered=lines.filter(l=>cleanName(l).toLowerCase().includes(q)||l.toLowerCase().includes(q));
         renderButtons(filtered);
-    }, 70);
+    },70);
 });
 </script>
-
 </body>
 </html>
